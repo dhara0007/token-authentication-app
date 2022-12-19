@@ -1,10 +1,11 @@
-import Navbar from './LayoutComponet/Navbar';
+import NavbarLogin from './NavbarLogin';
 import React,{useEffect, useState} from'react'
-import NavbarLogin from './LayoutComponet/NavbarLogin';
+import { useNavigate } from "react-router-dom";
 
-
-function App() {
-  const [login, setlogin] = useState(false);
+function Dashboard()
+{
+    const [login, setlogin] = useState(false);
+    const navigate = useNavigate();
   useEffect(() => {
     //below code works
     if(localStorage.getItem('login')==null)
@@ -18,17 +19,16 @@ function App() {
           // console.log(token);
     }
         });
-  return (
-
+  return(
     <>
-    {
-      !login?<Navbar/>:<NavbarLogin/>
-    }
+  {!login?
 
-<br></br>
-
+navigate("/Home")
+  :
+  <h1>Sucessfull login</h1>
+  }
     </>
-  );
+  )
 }
 
-export default App;
+export default Dashboard;
