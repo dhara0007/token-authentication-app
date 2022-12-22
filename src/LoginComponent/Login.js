@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
@@ -9,9 +9,9 @@ function Login()
     const [error, seterror] = useState('');
     const [sucess, setsucess] = useState('');
     const [login, setLogin] = useState(false);
-    const[token,setToken]=useState('');
+    const[token,setToken]=useState('');  
     const navigate = useNavigate();
-
+    
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -20,8 +20,9 @@ function Login()
             ...values, 
             [name]: value}))
       }
+    
     const handleSubmit = (event) => {
-       // event.preventDefault();
+        event.preventDefault();
 
         var details = {      
             'grant_type': 'password',
@@ -36,7 +37,7 @@ for (var property in details) {
   formBody.push(encodedKey + "=" + encodedValue);
 }
 formBody = formBody.join("&");
-
+console.log(formBody);
         Axios({
    method: 'post',
    url: 'http://localhost:56456/token',
@@ -45,7 +46,10 @@ formBody = formBody.join("&");
    headers: { 
      "Content-Type": "application/x-www-form-urlencoded",
    }
- }).then((response) =>{
+   
+ }
+ ).then((response) =>{
+    console.log(response);
     if(response.status=200)
     {
        
@@ -53,15 +57,81 @@ formBody = formBody.join("&");
             login:true,
             token:response.data.access_token
         }));
-           navigate("/Dashboard");
+        
+        event.preventDefault();
+        navigate("/Dashboard", { replace: true });
+    //navigate("/Dashboard");
+    }
+    else{
+        event.preventDefault();
+        navigate("/Login", { replace: true });
+      
+
     }
           
-       }).catch((error) =>{
-           console.log(error);
+       }).catch((error)=>
+       {
+console.log(error);
        })
+       
     }
-         
-        
+      
+      const handleReset=(event)=>{
+        setInputs('')
+        event.preventDefault();
+      }
+  return (
+    <>
+    <div className="row">
+    <div className="col-md-4"></div>
+     <div className="col-md-4 col-md-offset-1">
+        <div className="well">
+            <table className="table table-bordered">
+                <thead>
+                    <tr className="success">
+                        <th colSpan={2}>
+                            User Login
+                        </th>
+                                           
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>UserName</td>
+                        <td><input type="text" name="txtUserName" placeholder="UserName" value={inputs.txtUserName || ""}  onChange={handleChange}  /> </td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><input type="password" name="txtPassword" placeholder="Password" value={inputs.txtPassword || ""}  onChange={handleChange}  /></td>
+                    </tr>
+                    
+                    <tr className="success">
+                        <td> 
+                        <a className="btn btn-success" href="" onClick={handleSubmit}>LogIn</a>
+                            {/* <input id="btnLogin" className="btn btn-success"
+                                   type="button" value="Login"  onClick={handleSubmit}/> */}
+                                   </td>
+                                   <td>
+                                     <input id="btnReset" className="btn btn-danger"
+                                   type="button" value="Reset"  onClick={handleReset}/>
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+           
+        </div>
+    </div>
+    <div className="col-md-4"></div>
+    </div>
+    </>
+  )
+}
+
+export default Login;
+
+
+       
         
 //Below code work fine:
         // const url="http://localhost:56456/api/test/resource1";
@@ -100,95 +170,3 @@ formBody = formBody.join("&");
 //        })
 //     }
     
-
-
-          
-           
-             
-          
-           
-        
-    
-    
-      
-      const handleReset=(event)=>{
-        setInputs('')
-        event.preventDefault();
-      }
-  return (
-    <>
-    <div className="row">
-    <div className="col-md-4"></div>
-     <div className="col-md-4 col-md-offset-1">
-        <div className="well">
-            <table className="table table-bordered">
-                <thead>
-                    <tr className="success">
-                        <th colSpan={2}>
-                            User Login
-                        </th>
-                                           
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>UserName</td>
-                        <td><input type="text" name="txtUserName" placeholder="UserName" value={inputs.txtUserName || ""}  onChange={handleChange}  /> </td>
-                    </tr>
-                    <tr>
-                        <td>Password</td>
-                        <td><input type="password" name="txtPassword" placeholder="Password" value={inputs.txtPassword || ""}  onChange={handleChange}  /></td>
-                    </tr>
-                    
-                    <tr className="success">
-                        <td> 
-                            <input id="btnLogin" className="btn btn-success"
-                                   type="button" value="Login"  onClick={handleSubmit}/>
-                                   </td>
-                                   <td>
-                                     <input id="btnReset" className="btn btn-danger"
-                                   type="button" value="Reset"  onClick={handleReset}/>
-                        </td>
-                        
-                    </tr>
-                </tbody>
-            </table>
-           
-            {/* <div className="modal fade" tabindex="-1" id="successModal"
-                 data-keyboard="false" data-backdrop="static">
-                <div className="modal-dialog modal-sm">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <button type="button" className="close" data-dismiss="modal">
-                                &times;
-                            </button>
-                            <h4 className="modal-title">Success</h4>
-                        </div>
-                        <div className="modal-body">
-                            <form>
-                                <h2 className="modal-title">Registration Successful!</h2>
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-success"
-                                    data-dismiss="modal">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div id="divError" className="alert alert-danger collapse">
-            <a id="linkClose" href="#" className="close">&times;</a>
-                <div id="divErrorText"></div>
-            </div> */}
-        </div>
-    </div>
-    <div className="col-md-4"></div>
-    </div>
-    </>
-  )
-}
-
-export default Login;
